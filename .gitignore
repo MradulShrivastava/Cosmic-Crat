@@ -1,0 +1,69 @@
+# ==========================================
+# CosmicCrate Root .gitignore
+# ==========================================
+
+# 1. Environment & Secrets (SECURITY CONCERN)
+# Never commit real secrets, API keys, or environment files!
+.env
+.env.*
+!.env.example
+*.env
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+credentials.json
+secrets.json
+
+# 2. Dependencies
+node_modules/
+**/node_modules/
+.pnpm-store/
+
+# 3. Build & Output Directories
+dist/
+**/dist/
+build/
+**/build/
+out/
+.next/
+.nuxt/
+.vite/
+
+# 4. Logs & Debugging
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+
+# 5. OS & Editor Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
+
+# 6. AI & Agent Workspace Directories
+.agents/
+.codex/
+.gemini/
+.claude/
+
+# 7. Testing & Coverage
+coverage/
+.nyc_output/

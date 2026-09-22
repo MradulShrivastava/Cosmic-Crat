@@ -1,0 +1,5 @@
+import { testimonials } from "../data/landingPageData";
+
+export function Testimonials() {
+  return <section className="bg-[#d98f49] px-5 py-20 sm:px-8 lg:py-24"><div className="mx-auto max-w-7xl"><div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[.25em] text-[#5a2d20]">Little notes from our people</p><h2 className="mt-3 font-serif text-4xl text-[#fff9ea] sm:text-5xl">The kind of joy that stays.</h2></div><div className="text-sm font-bold text-[#5b3020]">★★★★★ <span className="ml-2 font-normal">Loved by early gift-givers</span></div></div><div className="mt-12 grid gap-4 md:grid-cols-3">{testimonials.map((item) => <figure key={item.name} className="rounded-2xl bg-[#fff6e7] p-7 text-[#38231c]"><blockquote className="font-serif text-2xl leading-snug">“{item.quote}”</blockquote><figcaption className="mt-8 border-t border-[#69412a]/15 pt-4 text-xs"><strong className="block">{item.name}</strong><span className="mt-1 block text-[#8a6550]">{item.occasion}</span></figcaption></figure>)}</div></div></section>;
+}

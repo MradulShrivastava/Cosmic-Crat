@@ -1,0 +1,19 @@
+# Backend .gitignore
+
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS & IDE
+.DS_Store
+.vscode/
+.idea/
