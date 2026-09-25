@@ -1,26 +1,44 @@
 import { useState } from "react";
 import { HiBars3, HiOutlineShoppingBag } from "react-icons/hi2";
+import { useSelector } from "react-redux";
 import { navigationItems } from "../data/landingPageData";
 
-export function LuxuryHeader({ onFindGift }) {
+export function LuxuryHeader({ onFindGift, onOpenCart }) {
   const [open, setOpen] = useState(false);
+  const cartItems = useSelector((state) => state.cart?.items || []);
+  const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <header className="sticky top-0 z-50 border-b border-[#3d261d]/10 bg-[#fffaf1]/95 backdrop-blur">
       <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-5 lg:px-8">
-        <a href="#top" className="group flex items-center gap-3" aria-label="Mahika home">
+        <a href="#top" className="group flex items-center gap-3" aria-label="CosmicCrate home">
           <span className="grid size-10 place-items-center rounded-full border border-[#b98332]/60 bg-[#21182b] font-serif text-xl text-[#f7ce75] shadow-sm transition group-hover:rotate-12">✦</span>
           <span className="leading-none">
-            <span className="block font-serif text-2xl font-bold tracking-tight text-[#2b1b19]">Mahika</span>
+            <span className="block font-serif text-2xl font-bold tracking-tight text-[#2b1b19]">CosmicCrate</span>
             <span className="mt-1 block text-[8px] font-bold uppercase tracking-[0.24em] text-[#9a6630]">Gifts with a little magic</span>
           </span>
         </a>
         <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary navigation">
           {navigationItems.map((item) => <a key={item.label} href={item.href} className="text-sm font-semibold text-[#563b2d] transition hover:text-[#b76428]">{item.label}</a>)}
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button type="button" onClick={onFindGift} className="hidden rounded-full bg-[#e6ad3f] px-5 py-2.5 text-xs font-extrabold text-[#2b1b19] transition hover:bg-[#f5c85d] sm:block">Find a gift</button>
-          <button type="button" className="grid size-10 place-items-center rounded-full border border-[#3d261d]/15 text-xl" aria-label="Shopping bag"><HiOutlineShoppingBag /></button>
+          
+          <button
+            type="button"
+            onClick={onOpenCart}
+            className="relative flex items-center gap-2 rounded-full border border-[#3d261d]/15 bg-white px-3.5 py-2 text-xs font-bold text-[#2b1b19] shadow-sm transition hover:bg-[#fff9eb] active:scale-95"
+            aria-label={`Cart with ${totalQuantity} items`}
+          >
+            <span className="text-lg"><HiOutlineShoppingBag /></span>
+            <span>Cart</span>
+            {totalQuantity > 0 && (
+              <span className="grid size-5 place-items-center rounded-full bg-[#21182b] text-[10px] font-extrabold text-[#f7ce75]">
+                {totalQuantity}
+              </span>
+            )}
+          </button>
+
           <button type="button" className="grid size-10 place-items-center rounded-full border border-[#3d261d]/15 text-xl lg:hidden" aria-label="Open menu" aria-expanded={open} onClick={() => setOpen(!open)}><HiBars3 /></button>
         </div>
       </div>

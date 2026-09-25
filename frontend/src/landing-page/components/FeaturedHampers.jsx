@@ -1,7 +1,110 @@
+import { useDispatch } from "react-redux";
 import { featuredHampers } from "../data/landingPageData";
+import { addToCart } from "../../Store/CartService/actions";
 
 const occasions = ["Diwali & festivals", "Birthdays", "Anniversaries", "Wellness", "Corporate gifting"];
 
-export function FeaturedHampers() {
-  return <section id="hampers" className="px-5 py-20 sm:px-8 lg:py-28"><div className="mx-auto max-w-7xl"><div className="text-center"><p className="text-[10px] font-bold uppercase tracking-[.25em] text-[#a35d2c]">Made for every celebration</p><h2 className="mt-3 font-serif text-4xl text-[#2b1b19] sm:text-5xl">A beautiful reason to give.</h2><p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-[#715949]">Festive, personal, celebratory or simply thoughtful—start with the moment, then make it unforgettable.</p></div><div className="mt-9 flex flex-wrap justify-center gap-2">{occasions.map((occasion, index) => <button type="button" key={occasion} className={`rounded-full border px-4 py-2 text-xs font-bold ${index === 0 ? "border-[#3c241c] bg-[#3c241c] text-[#fff8ec]" : "border-[#603b29]/15 bg-white text-[#704e3a]"}`}>{occasion}</button>)}</div><div className="mt-12 grid gap-6 md:grid-cols-3">{featuredHampers.map((hamper) => <article key={hamper.name} className="group overflow-hidden rounded-[1.5rem] border border-[#5c3725]/10 bg-[#251c27] shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#51321e]/20"><div className={`relative grid aspect-[1.16] place-items-center overflow-hidden bg-gradient-to-br ${hamper.theme}`}><span className="absolute inset-5 rounded-[1rem] border border-[#f9d98b]/30" /><span className="absolute left-6 top-6 rounded-full bg-[#fff9eb]/15 px-3 py-1 text-[9px] font-bold uppercase tracking-[.15em] text-[#fff4d8]">Mahika edit</span><span className="font-serif text-8xl text-[#f8d994] drop-shadow-2xl transition duration-500 group-hover:scale-110">{hamper.glyph}</span><span className="absolute bottom-5 text-[10px] font-bold uppercase tracking-[.38em] text-[#ffe9b2]/80">A small universe</span></div><div className="p-6"><p className="text-[10px] font-bold uppercase tracking-[.18em] text-[#e5ae59]">{hamper.sign}</p><h3 className="mt-2 font-serif text-2xl text-[#fff8ec]">{hamper.name}</h3><p className="mt-2 text-sm leading-6 text-[#f7ecdf]/65">{hamper.detail}</p><div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4"><span className="text-sm font-extrabold text-[#fff4d9]">From {hamper.price}</span><button type="button" className="rounded-full bg-[#f1c259] px-4 py-2 text-xs font-extrabold text-[#352017]">View hamper →</button></div></div></article>)}</div></div></section>;
+export function FeaturedHampers({ onSelectHamper }) {
+  const dispatch = useDispatch();
+
+  const handleQuickAdd = (hamper) => {
+    const rawPrice = parseInt(hamper.price.replace(/[^\d]/g, ""), 10) || 1699;
+    dispatch(
+      addToCart({
+        productId: hamper.name.toLowerCase().replace(/\s+/g, "-"),
+        variantId: "Signature Edition",
+        productName: hamper.name,
+        variantName: "Signature Edition",
+        quantity: 1,
+        unitPrice: rawPrice,
+        image: {
+          glyph: hamper.glyph,
+          themeColor: "#251c27",
+          accentColor: "#e5ae59",
+        },
+        collection: "Featured Hamper",
+        zodiacSign: hamper.sign,
+      })
+    );
+  };
+
+  return (
+    <section id="hampers" className="px-5 py-20 sm:px-8 lg:py-28">
+      <div className="mx-auto max-w-7xl">
+        <div className="text-center">
+          <p className="text-[10px] font-bold uppercase tracking-[.25em] text-[#a35d2c]">
+            Made for every celebration
+          </p>
+          <h2 className="mt-3 font-serif text-4xl text-[#2b1b19] sm:text-5xl">
+            A beautiful reason to give.
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-[#715949]">
+            Festive, personal, celebratory or simply thoughtful—start with the moment, then make it unforgettable.
+          </p>
+        </div>
+
+        <div className="mt-9 flex flex-wrap justify-center gap-2">
+          {occasions.map((occasion, index) => (
+            <button
+              type="button"
+              key={occasion}
+              className={`rounded-full border px-4 py-2 text-xs font-bold transition ${
+                index === 0
+                  ? "border-[#3c241c] bg-[#3c241c] text-[#fff8ec]"
+                  : "border-[#603b29]/15 bg-white text-[#704e3a] hover:bg-[#fffaf1]"
+              }`}
+            >
+              {occasion}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          {featuredHampers.map((hamper) => (
+            <article
+              key={hamper.name}
+              className="group overflow-hidden rounded-[1.5rem] border border-[#5c3725]/10 bg-[#251c27] shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#51321e]/20"
+            >
+              <div className={`relative grid aspect-[1.16] place-items-center overflow-hidden bg-gradient-to-br ${hamper.theme}`}>
+                <span className="absolute inset-5 rounded-[1rem] border border-[#f9d98b]/30" />
+                <span className="absolute left-6 top-6 rounded-full bg-[#fff9eb]/15 px-3 py-1 text-[9px] font-bold uppercase tracking-[.15em] text-[#fff4d8]">
+                  Mahika edit
+                </span>
+                <span className="font-serif text-8xl text-[#f8d994] drop-shadow-2xl transition duration-500 group-hover:scale-110">
+                  {hamper.glyph}
+                </span>
+                <span className="absolute bottom-5 text-[10px] font-bold uppercase tracking-[.38em] text-[#ffe9b2]/80">
+                  A small universe
+                </span>
+              </div>
+
+              <div className="p-6">
+                <p className="text-[10px] font-bold uppercase tracking-[.18em] text-[#e5ae59]">
+                  {hamper.sign}
+                </p>
+                <h3 className="mt-2 font-serif text-2xl text-[#fff8ec]">
+                  {hamper.name}
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-[#f7ecdf]/65">
+                  {hamper.detail}
+                </p>
+                <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4">
+                  <span className="text-sm font-extrabold text-[#fff4d9]">
+                    {hamper.price}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleQuickAdd(hamper)}
+                    className="rounded-full bg-[#f1c259] px-4 py-2 text-xs font-extrabold text-[#352017] transition hover:bg-[#f5d07a] active:scale-95"
+                  >
+                    + Add to cart
+                  </button>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }
