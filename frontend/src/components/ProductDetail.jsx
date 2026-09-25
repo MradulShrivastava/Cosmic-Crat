@@ -1,8 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
+import { useDispatch } from "react-redux";
 import { formatPrice } from "../lib/formatters";
+import { addToCart } from "../Store/CartService/actions";
+import { HiMinus, HiPlus, HiSparkles } from "react-icons/hi2";
 
-export function ProductDetail({ product, selectedVariant, onVariantChange, onBack, onOrder }) {
+export function ProductDetail({ product, selectedVariant, onVariantChange, onBack, onOrder, onOpenCart }) {
+  const dispatch = useDispatch();
   const [activeImageId, setActiveImageId] = useState(product.images[0]?.id ?? null);
+  const [quantity, setQuantity] = useState(1);
+  const [personalization, setPersonalization] = useState("");
+
   const activeVariant = useMemo(
     () => product.variants.find((variant) => variant.name === selectedVariant) ?? product.variants[0],
     [product, selectedVariant]
@@ -12,7 +19,31 @@ export function ProductDetail({ product, selectedVariant, onVariantChange, onBac
 
   useEffect(() => {
     setActiveImageId(product.images[0]?.id ?? null);
+    setQuantity(1);
+    setPersonalization("");
   }, [product]);
+
+  const handleAddToCart = () => {
+    if (!canOrder) return;
+    dispatch(
+      addToCart({
+        productId: product.id,
+        variantId: activeVariant.name,
+        productName: product.name,
+        variantName: activeVariant.name,
+        quantity: quantity,
+        unitPrice: activeVariant.price,
+        image: {
+          themeColor: product.themeColor,
+          accentColor: product.accentColor,
+          glyph: product.glyph,
+        },
+        personalization: personalization.trim() || null,
+        collection: product.collection,
+        zodiacSign: product.zodiacSign,
+      })
+    );
+  };
 
   return (
     <section className="row g-4">
@@ -51,7 +82,7 @@ export function ProductDetail({ product, selectedVariant, onVariantChange, onBac
       <div className="col-lg-6">
         <div className="cosmic-card p-4 h-100">
           <button className="btn btn-outline-light rounded-pill px-4 mb-4" onClick={onBack}>
-            Back To Shop
+            ← Back To Shop
           </button>
 
           <div className="d-flex flex-wrap gap-2 align-items-center mb-2">
@@ -78,8 +109,9 @@ export function ProductDetail({ product, selectedVariant, onVariantChange, onBac
             </div>
           </div>
 
+          {/* Variant Selection */}
           <div className="cosmic-subcard p-3 mb-4">
-            <label className="form-label text-secondary">Choose Version</label>
+            <label className="form-label text-secondary">Choose Version / Variant</label>
             <div className="row g-3">
               {product.variants.map((variant) => (
                 <div className="col-sm-6" key={variant.name}>
@@ -97,8 +129,52 @@ export function ProductDetail({ product, selectedVariant, onVariantChange, onBac
             </div>
           </div>
 
+          {/* Quantity Controls & Personalization */}
+          <div className="cosmic-subcard p-3 mb-4">
+            <div className="row g-3 align-items-center">
+              <div className="col-md-5">
+                <label className="form-label text-secondary d-block mb-1">Quantity</label>
+                <div className="d-flex align-items-center gap-2">
+                  <button
+                    type="button"
+                    className="btn btn-outline-light rounded-circle p-1"
+                    style={{ width: 36, height: 36 }}
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    disabled={quantity <= 1}
+                    aria-label="Decrease quantity"
+                  >
+                    <HiMinus />
+                  </button>
+                  <span className="fw-bold px-3 text-white fs-5">{quantity}</span>
+                  <button
+                    type="button"
+                    className="btn btn-outline-light rounded-circle p-1"
+                    style={{ width: 36, height: 36 }}
+                    onClick={() => setQuantity((q) => q + 1)}
+                    aria-label="Increase quantity"
+                  >
+                    <HiPlus />
+                  </button>
+                </div>
+              </div>
+
+              <div className="col-md-7">
+                <label className="form-label text-secondary mb-1">
+                  Personalized Message <small className="text-muted">(Optional)</small>
+                </label>
+                <input
+                  type="text"
+                  className="form-control cosmic-input"
+                  placeholder="e.g. Happy Birthday Sister!"
+                  value={personalization}
+                  onChange={(e) => setPersonalization(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+
           <div className="price-banner mb-4">
-            <span>Selected price</span>
+            <span>Unit price</span>
             <strong>{formatPrice(activeVariant.price)}</strong>
           </div>
 
@@ -119,11 +195,21 @@ export function ProductDetail({ product, selectedVariant, onVariantChange, onBac
 
           {!canOrder ? <div className="alert alert-warning mt-4 mb-0">This product is currently out of stock and cannot be ordered right now.</div> : null}
 
-          <div className="d-flex flex-wrap gap-2 mt-4">
-            <button className="btn cosmic-gold-btn rounded-pill px-4" onClick={() => onOrder(product, activeVariant.name)} disabled={!canOrder}>
-              {canOrder ? "Reserve This Box" : "Out Of Stock"}
+          <div className="d-flex flex-wrap gap-3 mt-4">
+            <button
+              className="btn cosmic-gold-btn rounded-pill px-4 py-2.5 font-bold"
+              onClick={handleAddToCart}
+              disabled={!canOrder}
+            >
+              🛒 Add to Cart ({formatPrice(activeVariant.price * quantity)})
             </button>
-            <button className="btn btn-outline-light rounded-pill px-4">Talk To Support</button>
+            <button
+              className="btn btn-outline-light rounded-pill px-4 py-2.5"
+              onClick={() => onOrder(product, activeVariant.name)}
+              disabled={!canOrder}
+            >
+              Direct Order / Prebook
+            </button>
           </div>
         </div>
       </div>
